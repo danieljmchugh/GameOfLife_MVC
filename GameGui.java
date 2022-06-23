@@ -88,7 +88,6 @@ public class GameGui extends javax.swing.JFrame {
 	}
 
 	public void printGame(List<Cell> livingCells) {
-		
 		this.remove(gameGrid);
 		
 		this.gameGrid = createGameGrid(livingCells);
@@ -143,7 +142,6 @@ public class GameGui extends javax.swing.JFrame {
 						startingCells.remove(i);
 					}
 				}
-
 				this.repaint();	
 			}
 		}
@@ -155,7 +153,7 @@ public class GameGui extends javax.swing.JFrame {
 		 */
         public void mouseClicked(MouseEvent e) {}  
     	public void mouseEntered(MouseEvent e) {}  
-    	public void mouseExited(MouseEvent e) {}  
-		public void mouseReleased(MouseEvent e) {}  
+    	public void mouseExited(MouseEvent e) {}
+    	public void mouseReleased(MouseEvent e) {}  
 	}
 }

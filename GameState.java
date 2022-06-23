@@ -3,20 +3,27 @@ import java.util.List;
 
 public class GameState
 {
-    private final int gridROWS = 20;
-    private final int gridCOLS = 20;
+    private int gridROWS;
+    private int gridCOLS;
     
-    private boolean gameGrid[][] = new boolean[gridROWS][gridCOLS];
+    private boolean gameGrid[][];
     private List<Cell> flaggedCells = new ArrayList<Cell>();
     public List<Cell> liveCells = new ArrayList<Cell>();
 
+
+    public GameState(int rows, int cols) {
+        this.gridROWS = rows;
+        this.gridCOLS = cols;
+        this.gameGrid = new boolean[gridROWS][gridCOLS];
+    }
+
     private void updateLiveCells() {
-        liveCells.clear();
+        this.liveCells.clear();
 
         for(int row = 0; row < gridROWS; row++) {
             for(int col = 0; col < gridCOLS; col++) {
                 if (gameGrid[row][col]) {
-                    liveCells.add(new Cell(row, col));
+                    this.liveCells.add(new Cell(row, col));
                 }
             }
         }
@@ -28,7 +35,7 @@ public class GameState
         for (int rowNum = Math.max(0, row - 1); rowNum <= Math.min(row + 1, gridROWS - 1); rowNum++) {
             for (int colNum = Math.max(0, col - 1); colNum <= Math.min(col + 1, gridCOLS - 1); colNum++) {
                 if (rowNum == row && colNum == col) {
-                    ;
+                    ;   /* Do nothing */
                 }
                 else if (gameGrid[rowNum][colNum]) {
                     neighbours++;
@@ -39,7 +46,7 @@ public class GameState
     }
 
     private void flagCellsForUpdating() {
-        flaggedCells.clear();
+        this.flaggedCells.clear();
 
         for(int row = 0; row < gridROWS; row++) {
             for(int col = 0; col < gridCOLS; col++) {
@@ -47,13 +54,13 @@ public class GameState
                 /* Living cells */
                 if (gameGrid[row][col]) {
                     if ((neighbours < 2) || (neighbours > 3)) {
-                        flaggedCells.add(new Cell(row, col));
+                        this.flaggedCells.add(new Cell(row, col));
                     }
                 }
                 /* Dead cells */
                 else if (!gameGrid[row][col]) {
                     if (neighbours == 3) {
-                        flaggedCells.add(new Cell(row, col));
+                        this.flaggedCells.add(new Cell(row, col));
                     }
                 }
             }
@@ -63,14 +70,14 @@ public class GameState
 
     private void updateFlaggedCells() {
         for (Cell c : flaggedCells) {
-            gameGrid[c.getRow()][c.getCol()] = !gameGrid[c.getRow()][c.getCol()]; /* Flips boolean */
+            this.gameGrid[c.getRow()][c.getCol()] = !this.gameGrid[c.getRow()][c.getCol()]; /* Flips boolean */
         }
     }
 
     public void initGameState(List<Cell> cells) {
-        liveCells = cells;
+        this.liveCells = cells;
         for (Cell c : cells) {
-            gameGrid[c.getRow()][c.getCol()] = !gameGrid[c.getRow()][c.getCol()];
+            this.gameGrid[c.getRow()][c.getCol()] = !this.gameGrid[c.getRow()][c.getCol()];
         }
     }
 
