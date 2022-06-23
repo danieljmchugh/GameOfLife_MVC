@@ -26,8 +26,8 @@ public class LifeController implements Runnable {
 	public void run() {
 		lifeModel.initGameState(lifeView.startingCells);
 		
-		/* This is done in a new thread, this is so prevent the main thread being monopolised and can therefore
-		   execute the repaint() request done in printGame()
+		/* This is done in a new thread to prevent the main thread being monopolised. Allowing the requests
+		   to repaint() to execute in printGame()
 		*/
      	while (true) {
 			lifeModel.updateGameState();
@@ -48,7 +48,7 @@ public class LifeController implements Runnable {
 			lifeController = controller;
 		}
 
-		@Override
+        @Override
         public void actionPerformed(ActionEvent e) {
             if (e.getSource() == lifeView.getRunMenuItem()) {
                 start();

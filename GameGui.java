@@ -95,7 +95,6 @@ public class GameGui extends javax.swing.JFrame {
 		this.add(gameGrid);
 
 		this.revalidate();
-		/* awt may collapse several calls to repaint() into one */
 		this.repaint();
 	}
 
@@ -151,12 +150,12 @@ public class GameGui extends javax.swing.JFrame {
 		
 		/* 
 		 * Gotta have empty implementation of these for MouseListener...
-		 * Would use MouseAdapter, but having trouble inheriting 
-		 * from two classes so... :)
+		 * Would use MouseAdapter, but can't inheriting 
+		 * from two classes, so... :)
 		 */
         public void mouseClicked(MouseEvent e) {}  
     	public void mouseEntered(MouseEvent e) {}  
     	public void mouseExited(MouseEvent e) {}  
-	    public void mouseReleased(MouseEvent e) {}  
+		public void mouseReleased(MouseEvent e) {}  
 	}
 }
