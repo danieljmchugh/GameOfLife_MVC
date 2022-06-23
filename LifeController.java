@@ -2,16 +2,17 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class LifeController implements Runnable {
-	GameState lifeModel;
-	GameGui lifeView;
+	GameModel lifeModel;
+	GameView lifeView;
 	Thread runner;
 
-	public LifeController(GameState model, GameGui view) {
+	public LifeController(GameModel model, GameView view) {
 		lifeModel = model;
 		lifeView = view;
 
 		/* Add listener to Run and Exit */
 		lifeView.getRunMenuItem().addActionListener(new LifeControllerActionListener(this));
+		lifeView.getStopMenuItem().addActionListener(new LifeControllerActionListener(this));
 		lifeView.getExitMenuItem().addActionListener(new LifeControllerActionListener(this));
 	}
 
@@ -23,14 +24,15 @@ public class LifeController implements Runnable {
 		}
 	}
 
+	@Override
 	public void run() {
-		lifeModel.initGameState(lifeView.startingCells);
+		lifeModel.initGameModel(lifeView.startingCells);
 		
 		/* This is done in a new thread to prevent the main thread being monopolised. Allowing the requests
 		   to repaint() to execute in printGame()
 		*/
      	while (true) {
-			lifeModel.updateGameState();
+			lifeModel.updateGameModel();
             lifeView.printGame(lifeModel.liveCells);
             
             try {
@@ -41,7 +43,7 @@ public class LifeController implements Runnable {
 	}
 
 
-	class LifeControllerActionListener implements ActionListener {
+	private class LifeControllerActionListener implements ActionListener {
 		LifeController lifeController;
 
 		public LifeControllerActionListener(LifeController controller) {
@@ -53,7 +55,9 @@ public class LifeController implements Runnable {
             if (e.getSource() == lifeView.getRunMenuItem()) {
                 start();
             }
-
+            else if (e.getSource() == lifeView.getStopMenuItem()) {
+                System.exit(0);
+            }
             else if (e.getSource() == lifeView.getExitMenuItem()) {
                 System.exit(0);
             }
