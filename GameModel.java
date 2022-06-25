@@ -82,6 +82,7 @@ public class GameModel
     }
 
     public void updateGameModel() {
+        System.out.println("Update GameModel: " + Thread.currentThread().getName());
         flagCellsForUpdating();
         updateFlaggedCells(); 
         updateLiveCells();

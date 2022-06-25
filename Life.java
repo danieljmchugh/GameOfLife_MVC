@@ -1,5 +1,6 @@
 public class Life {
     public static void main(String[] args) {
-        new LifeController(new GameModel(40, 40), new GameView(40, 40)); 
+        int gameSize = 20;
+        new LifeController(new GameModel(gameSize, gameSize), new GameView(gameSize, gameSize)); 
    }
 }
