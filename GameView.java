@@ -33,7 +33,7 @@ public class GameView extends javax.swing.JFrame {
 		
 		this.menuBar = new JMenuBar();
 		this.lifeMenu = new JMenu("Life");
-		this.runMenuItem = new JMenuItem("Run");
+		this.runMenuItem = new JMenuItem("Start");
 		this.stopMenuItem = new JMenuItem("Stop");
 		this.exitMenuItem = new JMenuItem("Exit");
 

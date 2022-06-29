@@ -5,7 +5,8 @@ public class GameModel
 {
     private int gridROWS;
     private int gridCOLS;
-    
+
+    public volatile boolean isStopped;
     private boolean gameGrid[][];
     private List<Cell> flaggedCells = new ArrayList<Cell>();
     public List<Cell> liveCells = new ArrayList<Cell>();
@@ -14,6 +15,7 @@ public class GameModel
     public GameModel(int rows, int cols) {
         this.gridROWS = rows;
         this.gridCOLS = cols;
+        this.isStopped = false;
         this.gameGrid = new boolean[gridROWS][gridCOLS];
     }
 
@@ -82,7 +84,6 @@ public class GameModel
     }
 
     public void updateGameModel() {
-        System.out.println("Update GameModel: " + Thread.currentThread().getName());
         flagCellsForUpdating();
         updateFlaggedCells(); 
         updateLiveCells();
