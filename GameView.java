@@ -16,9 +16,9 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
 public class GameView extends javax.swing.JFrame {
-	private int gridRows;
-    private int gridCols;
-    public List<Cell> startingCells = new ArrayList<Cell>();
+	private int gridDim;
+    public boolean[] startingCells;
+    private boolean[] boardCells;
 
 	private JPanel gameGrid;
 	private JMenuBar menuBar;
@@ -27,77 +27,75 @@ public class GameView extends javax.swing.JFrame {
 	private JMenuItem stopMenuItem;
 	private JMenuItem exitMenuItem;
 	
-	public GameView(int rows, int cols) {
-		this.gridRows = rows;
-		this.gridCols = cols;
+	public GameView(int dimention) {
+		gridDim = dimention;
+
+		startingCells = new boolean[gridDim * gridDim];
+		boardCells = new boolean[gridDim * gridDim];
+
+		menuBar = new JMenuBar();
+		lifeMenu = new JMenu("Life");
+		runMenuItem = new JMenuItem("Start");
+		stopMenuItem = new JMenuItem("Stop");
+		exitMenuItem = new JMenuItem("Exit");
+
+		lifeMenu.add(runMenuItem);
+		lifeMenu.add(stopMenuItem);
+		lifeMenu.add(exitMenuItem);
+		menuBar.add(lifeMenu);
+
+		gameGrid = createInteractiveGameGrid();
+		add(gameGrid);
+
+		setTitle("Life");
+		setJMenuBar(menuBar);
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setLocationRelativeTo(null);
+		setResizable(false);
 		
-		this.menuBar = new JMenuBar();
-		this.lifeMenu = new JMenu("Life");
-		this.runMenuItem = new JMenuItem("Start");
-		this.stopMenuItem = new JMenuItem("Stop");
-		this.exitMenuItem = new JMenuItem("Exit");
-
-		this.lifeMenu.add(runMenuItem);
-		this.lifeMenu.add(stopMenuItem);
-		this.lifeMenu.add(exitMenuItem);
-		this.menuBar.add(lifeMenu);
-
-		this.gameGrid = createInteractiveGameGrid();
-		this.add(gameGrid);
-
-		this.setTitle("Life");
-		this.setJMenuBar(menuBar);
-		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		this.setLocationRelativeTo(null);
-		this.setResizable(false);
-		
-		this.pack();
-		this.setVisible(true);
+		pack();
+		setVisible(true);
 	}
 
-	/* Initial Game Grid presented to the played to SET INITIAL living cells */
+	/* Initial Game Grid presented to the played to SET initial living cells */
 	private JPanel createInteractiveGameGrid() {
 		JPanel gameGrid = new JPanel();
-		gameGrid.setLayout(new GridLayout(gridRows, gridCols, 0, 0));
+		gameGrid.setLayout(new GridLayout(gridDim, gridDim, 0, 0));
 		
-		for (int row = 0; row < gridRows; row++) {
-			for (int col = 0; col < gridCols; col++) {
-				CellPanel cellPanel = new CellPanel(row, col, true);
-				gameGrid.add(cellPanel);
-			}
+		for (int i = 0; i < boardCells.length - 1; i++) {
+			int row = i / gridDim;
+			int col = i % gridDim;
+			CellPanel cellPanel = new CellPanel(i, Color.WHITE, true);
+			gameGrid.add(cellPanel);
 		}
 		return gameGrid;
 	}
+	
 
 	/* Subsequent Game Grid presented to the played to PRINT living cells */
-	private JPanel createGameGrid(List<Cell> livingCells) {
+	private JPanel createGameGrid(boolean[] board) {
 		JPanel gameGrid = new JPanel();
-		gameGrid.setLayout(new GridLayout(gridRows, gridCols, 0, 0));
+		gameGrid.setLayout(new GridLayout(gridDim, gridDim, 0, 0));
 
-		for (int row = 0; row < gridRows; row++) {
-			for (int col = 0; col < gridCols; col++) {
-				CellPanel cellPanel = new CellPanel(row, col, false);
-				
-				/* Default value as white, but change to black if it matches a living cell */
-				for (Cell c : livingCells) {
-					if ((c.getRow() == row) && (c.getCol() == col)) {
-						cellPanel.setBackgroundColor(Color.BLACK);		
-					}
-				}
-				gameGrid.add(cellPanel);
-			}
+		for (int i = 0; i < boardCells.length; i++) {
+			int row = i / gridDim;
+			int col = i % gridDim;
+			
+			CellPanel cellPanel = (board[i]) ? new CellPanel(i, Color.BLACK, false) : new CellPanel(i, Color.WHITE, false);
+			gameGrid.add(cellPanel);
 		}
+		
 		return gameGrid;
 	}
 
-	public void printGame(List<Cell> livingCells) {
-		this.remove(gameGrid);
+	public void printGame(boolean[] board) {
+		remove(gameGrid);
 		
-		this.gameGrid = createGameGrid(livingCells);
-		this.add(gameGrid);
+		gameGrid = createGameGrid(board);
+		add(gameGrid);
 
-		this.revalidate();
-		this.repaint();
+		revalidate();
+		repaint();
 	}
 
 	public JMenuItem getRunMenuItem() { return runMenuItem; }
@@ -105,48 +103,43 @@ public class GameView extends javax.swing.JFrame {
 	public JMenuItem getExitMenuItem() { return exitMenuItem; }
 
 	private class CellPanel extends JPanel implements MouseListener {
-		static final int PIXEL_SIZE = 20;
-		int row;
-		int col;
-		Color backgroundColor;
+		final int PIXEL_SIZE = 20;
+		public int index;
+		public Color colour;
 
-		CellPanel(int row, int col, boolean lisntener) {
-			this.backgroundColor = Color.WHITE;
-			this.setBorder(BorderFactory.createLineBorder(Color.BLACK));
-			this.setPreferredSize(new Dimension(PIXEL_SIZE, PIXEL_SIZE));
+		CellPanel(int i, Color colour, boolean lisntener) {
+			this.index = i;
+			this.colour = colour;
 			if (lisntener) {
-				this.addMouseListener(this);
+				addMouseListener(this);
 			}
-			this.row = row;
-			this.col = col;
+
+			setBorder(BorderFactory.createLineBorder(Color.BLACK));
+			setPreferredSize(new Dimension(PIXEL_SIZE, PIXEL_SIZE));
 		}
 
-		void setBackgroundColor(Color color) {
-			this.backgroundColor = color;
+		public void flipColour() {
+			colour = (colour == Color.WHITE) ? Color.BLACK : Color.WHITE; 
 		}
 
+		/* TODO: Read up on paintComponent() */
 		@Override
 		protected void paintComponent(Graphics g) {
-			g.setColor(backgroundColor);
+			g.setColor(colour);
 			g.fillRect(0,0, getWidth(), getHeight());
 		}
 
 		@Override
 		public void mousePressed(MouseEvent event) {
 			if(event.getButton() == MouseEvent.BUTTON1) {
-				this.setBackgroundColor(Color.BLACK);
-				startingCells.add(new Cell(this.row, this.col));
-				this.repaint();
+				colour = Color.BLACK;
+				startingCells[index] = true;
+				repaint();
 			}
 			else if(event.getButton() == MouseEvent.BUTTON3) {
-				this.setBackgroundColor(Color.WHITE);
-
-				for (int i = 0; i < startingCells.size(); i++) {
-					if((startingCells.get(i).getRow() == this.row) && (startingCells.get(i).getCol() == this.col)) {
-						startingCells.remove(i);
-					}
-				}
-				this.repaint();	
+				colour = Color.WHITE;
+				startingCells[index] = false;
+				repaint();	
 			}
 		}
 		

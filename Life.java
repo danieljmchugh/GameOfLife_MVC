@@ -1,6 +1,12 @@
 public class Life {
     public static void main(String[] args) {
-        int gameSize = 5;
-        new LifeController(new GameModel(gameSize, gameSize), new GameView(gameSize, gameSize)); 
+
+        if (args.length != 1) {
+            System.out.println("Usage: java Life <dimention>");
+            System.exit(0);
+        } else{
+            int dimention = Integer.valueOf(args[0]);
+            new LifeController(new GameModel(dimention), new GameView(dimention)); 
+        }
    }
 }
